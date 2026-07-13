@@ -204,8 +204,6 @@ function init() {
   $('btn-spin').addEventListener('click', spin);
 
   window.addEventListener('resize', resizeCanvas);
-  new MutationObserver(() => draw())
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   syncItems({ silent: true });
   resizeCanvas();

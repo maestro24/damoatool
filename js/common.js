@@ -1,23 +1,8 @@
 // 다모아툴 공용 모듈 — 테마, 토스트, 저장, 공유, 랜덤
 export const $ = (id) => document.getElementById(id);
 
-// ── 테마 ──
-const PREF_KEY = 'damoa_prefs';
-export const prefs = JSON.parse(localStorage.getItem(PREF_KEY) || '{}');
-if (!prefs.theme) prefs.theme = window.matchMedia?.('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-
-export function initTheme() {
-  document.documentElement.dataset.theme = prefs.theme;
-  const btn = $('btn-theme');
-  if (!btn) return;
-  btn.textContent = prefs.theme === 'dark' ? '☀' : '☾';
-  btn.addEventListener('click', () => {
-    prefs.theme = prefs.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
-    document.documentElement.dataset.theme = prefs.theme;
-    btn.textContent = prefs.theme === 'dark' ? '☀' : '☾';
-  });
-}
+// ── 테마: 라이트 전용 (다크모드 제거됨) — 기존 호출부 호환용 no-op ──
+export function initTheme() {}
 
 // ── 토스트 ──
 export function toast(msg, duration = 1600) {

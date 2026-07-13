@@ -330,8 +330,6 @@ function init() {
   $('btn-share').addEventListener('click', shareResult);
 
   window.addEventListener('resize', resizeCanvas);
-  new MutationObserver(() => draw())
-    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   if (!restoreFromUrl() && saved?.names?.length >= MIN_NAMES) build();
   resizeCanvas();

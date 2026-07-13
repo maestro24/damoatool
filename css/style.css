@@ -1,24 +1,15 @@
-/* 다모아툴 — 공용 디자인 시스템. 도구 페이지는 이 파일만 사용 */
+/* 다모아툴 — 공용 디자인 시스템 (라이트 전용). 도구 페이지는 이 파일만 사용 */
 :root {
-  --bg: #101216;
-  --bg-card: #191c23;
-  --bg-elev: #232833;
-  --text: #f0f2f6;
-  --text-dim: #98a1b0;
-  --border: #2b313f;
-  --accent: #ff7847;        /* 코랄 — 도구별 포인트는 --tool-accent 로 덮어씀 */
-  --tool-accent: var(--accent);
-  --ok: #34c179;
-  --radius: 14px;
-  --shadow: rgba(0, 0, 0, 0.4);
-}
-:root[data-theme='light'] {
   --bg: #f7f8fa;
   --bg-card: #ffffff;
   --bg-elev: #eef1f5;
   --text: #191c22;
   --text-dim: #626b7a;
   --border: #dfe4ec;
+  --accent: #ff7847;        /* 코랄 — 도구별 포인트는 --tool-accent 로 덮어씀 */
+  --tool-accent: var(--accent);
+  --ok: #34c179;
+  --radius: 14px;
   --shadow: rgba(20, 30, 50, 0.12);
 }
 
