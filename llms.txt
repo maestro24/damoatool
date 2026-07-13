@@ -1,0 +1,20 @@
+# 다모아툴 (Damoatool)
+
+> 회식·수업·회의에서 바로 쓰는 무료 웹 도구 모음. 사다리타기, 룰렛, 팀 나누기, 대형 타이머. 설치·가입 불필요.
+
+## 핵심 정보
+
+- 사다리타기: 참가자 2~10명, 결과가 반드시 1:1 대응(순열)임을 알고리즘으로 보장, 경로 애니메이션, 결과 URL 공유
+- 원판 룰렛: 항목 2~12개, 점심 메뉴 프리셋 내장, 균등 확률 회전
+- 팀 나누기: 명단 붙여넣기 → N팀 균등 분배(크기 차 최대 1), Fisher-Yates 셔플
+- 대형 타이머: 프리셋 1~30분, 전체화면(프로젝터용), WebAudio 종료음, 스톱워치 모드
+- 개인정보: 모든 데이터는 브라우저(localStorage)에만 저장, 서버 전송 없음
+- 가격: 무료
+
+## 페이지
+
+- [도구 모음](https://maestro24.github.io/damoatool/)
+- [사다리타기](https://maestro24.github.io/damoatool/ladder.html)
+- [원판 룰렛](https://maestro24.github.io/damoatool/roulette.html)
+- [팀 나누기](https://maestro24.github.io/damoatool/team.html)
+- [대형 타이머](https://maestro24.github.io/damoatool/timer.html)

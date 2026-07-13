@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>다모아툴 — 사다리타기 · 룰렛 · 팀 나누기 · 타이머</title>
+  <meta name="description" content="회식·수업·회의에서 바로 쓰는 무료 웹 도구 모음. 사다리타기, 점심 메뉴 룰렛, 팀 나누기, 대형 타이머 — 설치 없이 3초 만에 시작하세요." />
+  <link rel="canonical" href="https://maestro24.github.io/damoatool/" />
+  <meta property="og:title" content="다모아툴 — 사다리·룰렛·팀나누기·타이머" />
+  <meta property="og:description" content="회식·수업·회의 필수 도구 모음. 설치 없이 바로 사용." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maestro24.github.io/damoatool/" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FF8B5E'/><stop offset='1' stop-color='%23E2552B'/></linearGradient></defs><rect width='100' height='100' rx='18' fill='url(%23g)'/><rect x='22' y='22' width='24' height='24' rx='6' fill='white' opacity='.95'/><rect x='54' y='22' width='24' height='24' rx='12' fill='white' opacity='.8'/><rect x='22' y='54' width='24' height='24' rx='6' fill='white' opacity='.6'/><rect x='54' y='54' width='24' height='24' rx='6' fill='white' opacity='.95'/></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://maestro24.github.io/damoatool/",
+    "name": "다모아툴",
+    "description": "사다리타기, 룰렛, 팀 나누기, 타이머 — 무료 웹 도구 모음",
+    "inLanguage": "ko"
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="mark">🧰</span>다모아툴</a>
+      <nav class="nav">
+        <button class="icon-btn" id="btn-theme" aria-label="테마 전환">☾</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <h1 class="page-title">필요할 때 바로 쓰는 도구함</h1>
+        <p class="page-desc">설치도 가입도 없이, 열면 바로 시작. 명단은 브라우저에 자동 저장돼요.</p>
+      </div>
+
+      <div class="tool-grid">
+        <a class="tool-card" href="ladder.html">
+          <span class="icon">🪜</span>
+          <span class="name">사다리타기</span>
+          <span class="desc">커피 내기, 청소 당번 정하기의 정석</span>
+        </a>
+        <a class="tool-card" href="roulette.html">
+          <span class="icon">🎯</span>
+          <span class="name">원판 룰렛</span>
+          <span class="desc">점심 메뉴, 발표자 뽑기 한 방에</span>
+        </a>
+        <a class="tool-card" href="team.html">
+          <span class="icon">👥</span>
+          <span class="name">팀 나누기</span>
+          <span class="desc">명단 붙여넣으면 공정하게 랜덤 분배</span>
+        </a>
+        <a class="tool-card" href="timer.html">
+          <span class="icon">⏱️</span>
+          <span class="name">대형 타이머</span>
+          <span class="desc">수업·회의·발표용, 프로젝터에 딱</span>
+        </a>
+      </div>
+    </main>
+
+    <section class="seo-content" aria-label="다모아툴 소개">
+      <h2>다모아툴은 어떤 서비스인가요?</h2>
+      <p>다모아툴은 회식 자리, 교실, 회의실에서 즉시 필요한 도구를 모아둔 무료 웹 서비스입니다. 사다리타기로 커피 내기 당첨자를 정하고, 룰렛으로 점심 메뉴를 고르고, 팀 나누기로 조를 짜고, 대형 타이머로 발표 시간을 관리하세요. 모든 도구는 설치와 회원가입 없이 브라우저에서 바로 작동하며, 입력한 명단은 사용 중인 브라우저에만 저장됩니다.</p>
+      <h2>자주 묻는 질문</h2>
+      <dl>
+        <dt>정말 무료인가요?</dt>
+        <dd>네, 모든 도구가 무료이며 회원가입도 필요 없습니다.</dd>
+        <dt>추첨 결과는 공정한가요?</dt>
+        <dd>모든 랜덤 추첨은 통계적으로 검증된 Fisher-Yates 셔플 알고리즘을 사용합니다. 누구도 결과를 예측하거나 조작할 수 없습니다.</dd>
+        <dt>입력한 이름이 서버로 전송되나요?</dt>
+        <dd>아니요. 모든 데이터는 사용 중인 브라우저에만 저장되며 외부로 전송되지 않습니다.</dd>
+      </dl>
+    </section>
+
+    <footer class="footer">
+      <a href="ladder.html">사다리타기</a>
+      <a href="roulette.html">룰렛</a>
+      <a href="team.html">팀 나누기</a>
+      <a href="timer.html">타이머</a>
+    </footer>
+  </div>
+  <script type="module">
+    import { initTheme } from './js/common.js';
+    initTheme();
+  </script>
+</body>
+</html>

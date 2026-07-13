@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>원판 룰렛 — 다모아툴 | 점심 메뉴 룰렛, 랜덤 뽑기 돌림판</title>
+  <meta name="description" content="설치 없이 돌리는 원판 룰렛. 점심 메뉴 고르기, 발표자 뽑기, 청소 당번 정하기까지. 항목 2~12개, 당첨 제거 옵션, 전체화면 지원." />
+  <link rel="canonical" href="https://maestro24.github.io/damoatool/roulette.html" />
+  <meta property="og:title" content="원판 룰렛 — 다모아툴" />
+  <meta property="og:description" content="점심 메뉴, 발표자 뽑기 한 방에. 돌리기만 누르세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maestro24.github.io/damoatool/roulette.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FF8B5E'/><stop offset='1' stop-color='%23E2552B'/></linearGradient></defs><rect width='100' height='100' rx='18' fill='url(%23g)'/><rect x='22' y='22' width='24' height='24' rx='6' fill='white' opacity='.95'/><rect x='54' y='22' width='24' height='24' rx='12' fill='white' opacity='.8'/><rect x='22' y='54' width='24' height='24' rx='6' fill='white' opacity='.6'/><rect x='54' y='54' width='24' height='24' rx='6' fill='white' opacity='.95'/></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "룰렛 결과는 정말 무작위인가요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. 당첨 항목은 회전이 시작되기 전에 난수로 균등하게 추첨되고, 원판은 그 결과에 정확히 멈추도록 감속합니다. 항목별 당첨 확률은 모두 동일하며 자동화 테스트로 검증됩니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "당첨된 항목을 빼고 계속 돌릴 수 있나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. '당첨 항목 제거' 옵션을 켜면 추첨이 끝날 때마다 당첨 항목이 목록에서 자동으로 빠져, 발표 순서 정하기처럼 연속 추첨에 쓸 수 있습니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "항목은 몇 개까지 넣을 수 있나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "2개부터 12개까지 지원합니다. 점심 메뉴, 청소 당번, 발표 순서 프리셋을 누르면 바로 시작할 수 있습니다."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root { --tool-accent: #b57bee; }
+    .wheel-wrap { display: flex; justify-content: center; padding: 4px 0; }
+    #cv-wheel { display: block; max-width: 100%; }
+    .opt-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; font-size: 0.9rem; color: var(--text-dim); }
+    .opt-row input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--tool-accent); cursor: pointer; }
+    .opt-row label { cursor: pointer; }
+    #result-box .result-big { color: var(--tool-accent); }
+    .fs-active .wheel-wrap { padding: 20px 0; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="mark">🧰</span>다모아툴</a>
+      <nav class="nav">
+        <button class="icon-btn" id="btn-fs" aria-label="전체화면">⛶</button>
+        <button class="icon-btn" id="btn-theme" aria-label="테마 전환">☾</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <h1 class="page-title">🎯 원판 룰렛</h1>
+        <p class="page-desc">항목을 넣고 돌리기만 누르세요. 포인터가 멈춘 곳이 오늘의 선택!</p>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label for="in-items">항목 (2~12개, 한 줄에 하나)</label>
+          <textarea class="input" id="in-items" rows="5" placeholder="김치찌개&#10;돈까스&#10;국밥"></textarea>
+        </div>
+        <div class="chips" style="margin-top:10px">
+          <button class="chip-btn" type="button" data-preset="lunch">🍚 점심 메뉴</button>
+          <button class="chip-btn" type="button" data-preset="clean">🧹 청소 당번</button>
+          <button class="chip-btn" type="button" data-preset="order">🎤 발표 순서</button>
+        </div>
+        <div class="opt-row">
+          <input type="checkbox" id="chk-remove" />
+          <label for="chk-remove">당첨 항목 제거 (연속 추첨용)</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="wheel-wrap">
+          <canvas id="cv-wheel" aria-label="룰렛 원판"></canvas>
+        </div>
+        <div class="btn-row" style="margin-top:14px;justify-content:center">
+          <button class="btn" id="btn-spin" disabled>🎯 돌리기</button>
+        </div>
+        <div class="result-box" id="result-box" hidden style="margin-top:14px">
+          <div style="font-size:0.85rem;color:var(--text-dim);font-weight:700">당첨</div>
+          <div class="result-big" id="result-text"></div>
+        </div>
+      </div>
+    </main>
+
+    <section class="seo-content" aria-label="원판 룰렛 사용법과 FAQ">
+      <h2>원판 룰렛 사용법</h2>
+      <ol>
+        <li>항목을 한 줄에 하나씩 입력합니다 (2~12개). 프리셋 버튼(점심 메뉴·청소 당번·발표 순서)을 누르면 바로 채워집니다.</li>
+        <li>"돌리기"를 누르면 원판이 4~6초간 부드럽게 감속하며 회전합니다.</li>
+        <li>상단 포인터가 멈춘 세그먼트가 당첨 항목으로 강조 표시됩니다.</li>
+        <li>"당첨 항목 제거"를 켜 두면 당첨된 항목이 자동으로 목록에서 빠져 연속 추첨에 편리합니다.</li>
+        <li>회식 자리나 교실에서는 전체화면 버튼(⛶)을 눌러 크게 띄워 보세요. 입력한 항목은 브라우저에 자동 저장됩니다.</li>
+      </ol>
+      <h2>자주 묻는 질문</h2>
+      <dl>
+        <dt>결과는 정말 무작위인가요?</dt>
+        <dd>당첨 항목은 회전 시작 전에 난수로 균등 추첨되고, 원판은 그 결과 위에 정확히 멈추도록 계산된 각도로 감속합니다. 항목별 확률이 동일하다는 사실은 자동화 테스트로 검증됩니다.</dd>
+        <dt>점심 메뉴 말고 다른 용도로도 쓸 수 있나요?</dt>
+        <dd>물론입니다. 발표자 뽑기, 벌칙 정하기, 경품 추첨, 아이스브레이킹 질문 뽑기 등 2~12개 중 하나를 골라야 하는 모든 상황에 쓸 수 있습니다.</dd>
+        <dt>입력한 항목이 서버로 전송되나요?</dt>
+        <dd>아니요. 항목은 사용 중인 브라우저에만 저장되며 외부로 전송되지 않습니다.</dd>
+      </dl>
+    </section>
+
+    <footer class="footer">
+      <a href="ladder.html">사다리타기</a>
+      <a href="roulette.html">룰렛</a>
+      <a href="team.html">팀 나누기</a>
+      <a href="timer.html">타이머</a>
+    </footer>
+  </div>
+  <script type="module" src="js/roulette.js"></script>
+</body>
+</html>

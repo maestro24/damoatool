@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>사다리타기 — 다모아툴 | 온라인 사다리 게임, 결과 링크 공유</title>
+  <meta name="description" content="설치 없이 바로 하는 온라인 사다리타기. 참가자 2~10명, 당첨 항목 설정, 경로 애니메이션, 결과 링크 공유까지. 커피 내기·청소 당번 정하기의 정석." />
+  <link rel="canonical" href="https://maestro24.github.io/damoatool/ladder.html" />
+  <meta property="og:title" content="사다리타기 — 다모아툴" />
+  <meta property="og:description" content="참가자 입력하고 시작만 누르면 끝. 결과는 링크로 공유하세요." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maestro24.github.io/damoatool/ladder.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FF8B5E'/><stop offset='1' stop-color='%23E2552B'/></linearGradient></defs><rect width='100' height='100' rx='18' fill='url(%23g)'/><rect x='22' y='22' width='24' height='24' rx='6' fill='white' opacity='.95'/><rect x='54' y='22' width='24' height='24' rx='12' fill='white' opacity='.8'/><rect x='22' y='54' width='24' height='24' rx='6' fill='white' opacity='.6'/><rect x='54' y='54' width='24' height='24' rx='6' fill='white' opacity='.95'/></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "사다리타기 결과는 조작 없이 공정한가요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. 가로줄은 난수로 생성되며, 사다리 구조상 각 참가자는 반드시 서로 다른 결과에 1:1로 도착합니다. 두 명이 같은 결과에 도착하는 일은 수학적으로 불가능합니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "사다리 결과를 다른 사람에게 공유할 수 있나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. '결과 링크 복사' 버튼을 누르면 현재 사다리와 동일한 결과가 담긴 링크가 복사됩니다. 링크를 연 사람은 똑같은 사다리와 결과를 그대로 확인할 수 있습니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "참가자는 몇 명까지 가능한가요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "2명부터 10명까지 지원합니다. 결과 항목을 따로 입력하지 않으면 '당첨' 1개와 나머지 '꽝'으로 자동 구성됩니다."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root { --tool-accent: #34c179; }
+    .ladder-stage { display: flex; flex-direction: column; gap: 6px; }
+    .ladder-labels { display: grid; gap: 4px; }
+    .ladder-labels.top { align-items: end; }
+    .ladder-name {
+      background: none; border: none; cursor: pointer;
+      color: var(--path-color, var(--text));
+      font-weight: 800; font-size: 0.85rem; font-family: inherit;
+      padding: 4px 2px; border-radius: 8px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .ladder-name:hover { background: var(--bg-elev); }
+    .ladder-item {
+      text-align: center; font-size: 0.82rem; font-weight: 700; color: var(--text-dim);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 2px;
+    }
+    #cv-ladder { display: block; margin: 0 auto; max-width: 100%; }
+    .result-table { width: 100%; border-collapse: collapse; }
+    .result-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+    .result-table td.win { color: var(--tool-accent); font-weight: 900; }
+    .result-table tr:last-child td { border-bottom: none; }
+    .hint { font-size: 0.8rem; color: var(--text-dim); margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="mark">🧰</span>다모아툴</a>
+      <nav class="nav">
+        <button class="icon-btn" id="btn-theme" aria-label="테마 전환">☾</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <h1 class="page-title">🪜 사다리타기</h1>
+        <p class="page-desc">참가자를 넣고 사다리를 만들면, 각자의 경로를 따라 결과가 정해져요. 결과는 링크로 공유할 수 있어요.</p>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label for="in-names">참가자 (2~10명, 줄바꿈 또는 쉼표로 구분)</label>
+          <textarea class="input" id="in-names" rows="3" placeholder="철수&#10;영희&#10;민수"></textarea>
+        </div>
+        <div class="field" style="margin-top:12px">
+          <label for="in-items">결과 항목 (쉼표 구분 — 비우면 "당첨" 1개 + 나머지 "꽝")</label>
+          <input class="input" id="in-items" placeholder="당첨" />
+        </div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn" id="btn-build">사다리 만들기</button>
+          <button class="btn btn-ghost" id="btn-reshuffle">🔀 다시 섞기</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ladder-stage">
+          <div class="ladder-labels top" id="lbl-top"></div>
+          <canvas id="cv-ladder" aria-label="사다리 판"></canvas>
+          <div class="ladder-labels bottom" id="lbl-bottom"></div>
+        </div>
+        <p class="hint">위쪽 이름을 누르면 그 사람 경로만 볼 수 있어요.</p>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="btn" id="btn-start" disabled>▶ 시작</button>
+          <button class="btn btn-ghost" id="btn-share" disabled>🔗 결과 링크 복사</button>
+        </div>
+      </div>
+
+      <div class="card" id="result-card" hidden>
+        <h2 style="font-size:1.05rem;margin-bottom:10px">결과</h2>
+        <table class="result-table"><tbody id="tbl-body"></tbody></table>
+      </div>
+    </main>
+
+    <section class="seo-content" aria-label="사다리타기 사용법과 FAQ">
+      <h2>온라인 사다리타기 사용법</h2>
+      <ol>
+        <li>참가자 이름을 줄바꿈 또는 쉼표로 구분해 입력합니다 (2~10명).</li>
+        <li>결과 항목을 입력합니다. 비워 두면 "당첨" 1개와 나머지 "꽝"으로 자동 채워집니다.</li>
+        <li>"사다리 만들기"를 누르면 가로줄이 무작위로 놓인 사다리가 그려집니다.</li>
+        <li>"시작"을 누르면 참가자별 경로가 순서대로 그려지며 결과 표가 완성됩니다. 특정 사람의 경로만 보고 싶다면 위쪽 이름을 눌러 보세요.</li>
+        <li>"결과 링크 복사"로 같은 결과를 누구에게나 공유할 수 있고, "다시 섞기"로 새 사다리를 만들 수 있습니다.</li>
+      </ol>
+      <h2>자주 묻는 질문</h2>
+      <dl>
+        <dt>결과는 조작 없이 공정한가요?</dt>
+        <dd>가로줄은 난수로 생성되고, 사다리 구조상 모든 참가자는 서로 다른 결과에 1:1로 도착합니다. 두 명이 같은 칸에 도착하는 일은 수학적으로 불가능하며, 이 성질은 자동화 테스트로 검증됩니다.</dd>
+        <dt>결과를 공유하면 상대방도 같은 사다리를 보나요?</dt>
+        <dd>네. 공유 링크에는 참가자와 사다리 시드가 담겨 있어, 링크를 연 사람은 완전히 동일한 사다리와 결과를 확인합니다.</dd>
+        <dt>입력한 이름이 서버로 전송되나요?</dt>
+        <dd>아니요. 명단은 사용 중인 브라우저에만 저장되며 외부로 전송되지 않습니다.</dd>
+      </dl>
+    </section>
+
+    <footer class="footer">
+      <a href="ladder.html">사다리타기</a>
+      <a href="roulette.html">룰렛</a>
+      <a href="team.html">팀 나누기</a>
+      <a href="timer.html">타이머</a>
+    </footer>
+  </div>
+  <script type="module" src="js/ladder.js"></script>
+</body>
+</html>

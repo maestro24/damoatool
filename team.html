@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>팀 나누기 — 명단 붙여넣고 공정하게 랜덤 조 편성 | 다모아툴</title>
+  <meta name="description" content="명단을 줄 단위로 붙여넣으면 2~10개 팀으로 공정하게 랜덤 분배. 팀장 뽑기, 팀 이름 커스텀, 결과 링크 공유까지 — 설치 없이 무료." />
+  <link rel="canonical" href="https://maestro24.github.io/damoatool/team.html" />
+  <meta property="og:title" content="팀 나누기 — 공정한 랜덤 조 편성" />
+  <meta property="og:description" content="명단 붙여넣으면 3초 만에 팀 완성. 팀장 뽑기와 결과 공유 지원." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maestro24.github.io/damoatool/team.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FF8B5E'/><stop offset='1' stop-color='%23E2552B'/></linearGradient></defs><rect width='100' height='100' rx='18' fill='url(%23g)'/><rect x='22' y='22' width='24' height='24' rx='6' fill='white' opacity='.95'/><rect x='54' y='22' width='24' height='24' rx='12' fill='white' opacity='.8'/><rect x='22' y='54' width='24' height='24' rx='6' fill='white' opacity='.6'/><rect x='54' y='54' width='24' height='24' rx='6' fill='white' opacity='.95'/></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "팀 분배는 공정한가요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. 통계적으로 검증된 Fisher-Yates 셔플 알고리즘으로 명단을 무작위로 섞은 뒤 순서대로 분배하므로 누구도 결과를 예측하거나 조작할 수 없습니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "인원이 팀 수로 나누어떨어지지 않으면 어떻게 되나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "팀 간 인원 차이가 최대 1명이 되도록 자동으로 균등 분배합니다. 예를 들어 7명을 3팀으로 나누면 3명, 2명, 2명이 됩니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "결과를 다른 사람에게 공유할 수 있나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "네. 결과 화면의 링크 복사 버튼을 누르면 팀 편성 결과가 담긴 URL이 복사됩니다. 링크를 받은 사람은 같은 결과를 그대로 확인할 수 있습니다."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root { --tool-accent: #4f8df7; }
+    .opt-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .check-label { display: inline-flex; align-items: center; gap: 7px; font-size: 0.9rem; font-weight: 700; cursor: pointer; user-select: none; }
+    .check-label input { width: 17px; height: 17px; accent-color: var(--tool-accent); cursor: pointer; }
+    .name-count { font-size: 0.78rem; color: var(--text-dim); font-weight: 700; }
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+    .team-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+      box-shadow: 0 2px 12px var(--shadow);
+      animation: team-in 0.4s ease backwards;
+      animation-delay: calc(var(--i, 0) * 0.1s);
+    }
+    @keyframes team-in { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+    .team-card h3 { font-size: 0.95rem; color: var(--tool-accent); margin-bottom: 8px; }
+    .team-card ul { list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="mark">🧰</span>다모아툴</a>
+      <nav class="nav">
+        <button class="icon-btn" id="btn-theme" aria-label="테마 전환">☾</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <h1 class="page-title">👥 팀 나누기</h1>
+        <p class="page-desc">명단을 붙여넣으면 공정하게 랜덤 분배해요. 입력한 명단은 브라우저에만 저장돼요.</p>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label for="names">명단 (한 줄에 한 명, 최대 100명)</label>
+          <textarea class="input" id="names" rows="7" placeholder="김철수&#10;이영희&#10;박민수&#10;최지우"></textarea>
+          <p class="name-count" id="name-count" aria-live="polite">0명</p>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label>팀 수</label>
+          <div class="chips" id="team-count-chips" role="group" aria-label="팀 수 선택"></div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label for="team-names">팀 이름 (쉼표로 구분, 비우면 1팀·2팀…)</label>
+          <input class="input" id="team-names" type="text" placeholder="레드, 블루, 옐로우" />
+        </div>
+        <div class="opt-row" style="margin-top:14px">
+          <label class="check-label"><input type="checkbox" id="opt-leader" /> 👑 팀장 뽑기 (각 팀 첫 번째 사람)</label>
+        </div>
+        <div class="btn-row" style="margin-top:16px">
+          <button class="btn" id="btn-split">👥 팀 짜기</button>
+          <button class="btn btn-ghost" id="btn-reshuffle" disabled>🔀 다시 섞기</button>
+        </div>
+      </div>
+
+      <section id="result-wrap" hidden aria-label="팀 편성 결과">
+        <div class="team-grid" id="teams"></div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="btn btn-ghost" id="btn-share">🔗 링크 복사</button>
+          <button class="btn btn-ghost" id="btn-copy">📋 결과 복사</button>
+        </div>
+      </section>
+    </main>
+
+    <section class="seo-content" aria-label="팀 나누기 사용법과 FAQ">
+      <h2>팀 나누기 사용법</h2>
+      <ol>
+        <li>명단 입력칸에 이름을 한 줄에 한 명씩 붙여넣습니다. 엑셀이나 메신저에서 복사한 명단도 그대로 붙여넣으면 빈 줄과 중복이 자동으로 정리됩니다.</li>
+        <li>팀 수 버튼(2~10)에서 원하는 팀 개수를 선택합니다.</li>
+        <li>필요하면 팀 이름을 쉼표로 구분해 입력하고, 팀장 뽑기 옵션을 켭니다.</li>
+        <li>팀 짜기 버튼을 누르면 팀별 카드가 순서대로 나타납니다. 마음에 들지 않으면 다시 섞기를 누르세요.</li>
+        <li>링크 복사로 결과 URL을 공유하거나, 결과 복사로 텍스트를 메신저에 붙여넣을 수 있습니다.</li>
+      </ol>
+      <p>팀 나누기는 수업 조 편성, 회사 워크숍 조 배정, 체육대회 팀 구성, 스터디 그룹 나누기 등 사람을 공정하게 나눠야 하는 모든 상황에서 쓸 수 있는 무료 도구입니다. 인원이 팀 수로 나누어떨어지지 않아도 팀 간 인원 차이가 최대 1명이 되도록 자동으로 균등 분배하며, 입력한 명단과 설정은 사용 중인 브라우저에만 저장되고 서버로 전송되지 않습니다.</p>
+      <h2>자주 묻는 질문</h2>
+      <dl>
+        <dt>팀 분배는 공정한가요?</dt>
+        <dd>네. 통계적으로 검증된 Fisher-Yates 셔플 알고리즘으로 명단을 무작위로 섞은 뒤 순서대로 분배하므로 누구도 결과를 예측하거나 조작할 수 없습니다.</dd>
+        <dt>인원이 팀 수로 나누어떨어지지 않으면 어떻게 되나요?</dt>
+        <dd>팀 간 인원 차이가 최대 1명이 되도록 자동으로 균등 분배합니다. 예를 들어 7명을 3팀으로 나누면 3명, 2명, 2명이 됩니다.</dd>
+        <dt>결과를 다른 사람에게 공유할 수 있나요?</dt>
+        <dd>네. 링크 복사 버튼을 누르면 팀 편성 결과가 담긴 URL이 복사되며, 링크를 받은 사람은 같은 결과를 그대로 확인할 수 있습니다.</dd>
+      </dl>
+    </section>
+
+    <footer class="footer">
+      <a href="ladder.html">사다리타기</a>
+      <a href="roulette.html">룰렛</a>
+      <a href="team.html">팀 나누기</a>
+      <a href="timer.html">타이머</a>
+    </footer>
+  </div>
+  <script type="module" src="js/team.js"></script>
+</body>
+</html>

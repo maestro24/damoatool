@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>대형 타이머 — 수업·회의·발표용 풀스크린 타이머 | 다모아툴</title>
+  <meta name="description" content="화면에 꽉 차는 대형 타이머. 1분~30분 프리셋, 커스텀 시간, 스톱워치, 전체화면, 종료 알림음까지 — 프로젝터·수업·회의에 딱 맞는 무료 웹 타이머." />
+  <link rel="canonical" href="https://maestro24.github.io/damoatool/timer.html" />
+  <meta property="og:title" content="대형 타이머 — 프로젝터용 풀스크린 타이머" />
+  <meta property="og:description" content="화면 가득 큰 숫자, 종료 알림음, 전체화면. 수업과 회의 시간 관리를 한 번에." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://maestro24.github.io/damoatool/timer.html" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="theme-color" content="#101216" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FF8B5E'/><stop offset='1' stop-color='%23E2552B'/></linearGradient></defs><rect width='100' height='100' rx='18' fill='url(%23g)'/><rect x='22' y='22' width='24' height='24' rx='6' fill='white' opacity='.95'/><rect x='54' y='22' width='24' height='24' rx='12' fill='white' opacity='.8'/><rect x='22' y='54' width='24' height='24' rx='6' fill='white' opacity='.6'/><rect x='54' y='54' width='24' height='24' rx='6' fill='white' opacity='.95'/></svg>" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "타이머를 프로젝터나 큰 화면에 띄우려면 어떻게 하나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "전체화면 버튼을 누르면 헤더와 버튼이 사라지고 숫자가 화면 가득 커집니다. ESC 키를 누르면 원래 화면으로 돌아옵니다."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "종료 알림음이 나지 않아요.",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "브라우저 정책상 소리는 사용자가 페이지와 상호작용한 뒤에만 재생됩니다. 시작 버튼을 눌러 타이머를 시작했다면 종료 시 알림음이 재생되며, 기기 음량과 무음 모드도 확인해 주세요."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "탭을 백그라운드에 두면 시간이 어긋나지 않나요?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "아니요. 화면 갱신 주기를 세는 방식이 아니라 시작 시각 기준으로 남은 시간을 계산하므로, 탭을 백그라운드에 두거나 다른 창을 보다가 돌아와도 시간은 정확합니다."
+        }
+      }
+    ]
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root { --tool-accent: #e0a72e; }
+    [hidden] { display: none !important; }
+    .mode-tabs { display: flex; gap: 8px; }
+    .timer-stage { text-align: center; padding: 10px 0; }
+    .timer-display {
+      font-variant-numeric: tabular-nums;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      font-size: clamp(4rem, 21vw, 34vh);
+      transition: color 0.3s;
+    }
+    .timer-display.long { font-size: clamp(2.6rem, 14vw, 26vh); }
+    .timer-display.warn { color: #e5484d; }
+    .timer-hint { color: var(--text-dim); font-size: 0.82rem; margin-top: 4px; }
+    .custom-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .custom-row .input { width: 90px; text-align: center; }
+    .custom-row .unit { color: var(--text-dim); font-size: 0.9rem; font-weight: 700; }
+    /* 전체화면: 숫자 극대화 */
+    .fs-active .timer-display { font-size: min(26vw, 52vh); }
+    .fs-active .timer-display.long { font-size: min(17vw, 42vh); }
+    .fs-active .timer-hint { display: none; }
+    /* 종료 플래시 */
+    @keyframes flash-bg { 0%, 100% { background: var(--bg); } 50% { background: #e5484d; } }
+    body.flash { animation: flash-bg 0.45s ease 3; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <a class="brand" href="index.html"><span class="mark">🧰</span>다모아툴</a>
+      <nav class="nav">
+        <button class="icon-btn" id="btn-fs" aria-label="전체화면">⛶</button>
+        <button class="icon-btn" id="btn-theme" aria-label="테마 전환">☾</button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <div>
+        <h1 class="page-title">⏱️ 대형 타이머</h1>
+        <p class="page-desc">화면 가득 큰 숫자로 시간을 관리하세요. 전체화면(⛶)을 누르면 프로젝터 모드가 돼요.</p>
+      </div>
+
+      <div class="mode-tabs" role="tablist" aria-label="모드 선택">
+        <button class="chip-btn on" id="tab-timer" role="tab" aria-selected="true">⏱️ 타이머</button>
+        <button class="chip-btn" id="tab-stopwatch" role="tab" aria-selected="false">⏲️ 스톱워치</button>
+      </div>
+
+      <div class="timer-stage">
+        <div class="timer-display" id="display" aria-live="off">05:00</div>
+        <p class="timer-hint" id="hint">스페이스 키로 시작/일시정지할 수 있어요</p>
+      </div>
+
+      <div class="card" id="setup-panel">
+        <div class="field">
+          <label>프리셋</label>
+          <div class="chips" id="preset-chips" role="group" aria-label="시간 프리셋"></div>
+        </div>
+        <div class="field" style="margin-top:14px">
+          <label for="in-min">커스텀 시간</label>
+          <div class="custom-row">
+            <input class="input" id="in-min" type="number" inputmode="numeric" min="0" max="1439" placeholder="0" aria-label="분" /><span class="unit">분</span>
+            <input class="input" id="in-sec" type="number" inputmode="numeric" min="0" max="59" placeholder="0" aria-label="초" /><span class="unit">초</span>
+            <button class="btn btn-ghost" id="btn-custom" style="padding:11px 16px">적용</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn" id="btn-start">▶ 시작</button>
+        <button class="btn btn-ghost" id="btn-pause" disabled>⏸ 일시정지</button>
+        <button class="btn btn-ghost" id="btn-reset">↺ 리셋</button>
+      </div>
+    </main>
+
+    <section class="seo-content" aria-label="대형 타이머 사용법과 FAQ">
+      <h2>대형 타이머 사용법</h2>
+      <ol>
+        <li>1분·3분·5분·10분·15분·30분 프리셋 버튼을 누르거나, 분·초를 직접 입력하고 적용을 누릅니다.</li>
+        <li>시작 버튼(또는 스페이스 키)을 누르면 카운트다운이 시작되고, 남은 시간이 10% 이하가 되면 숫자가 빨간색으로 바뀝니다.</li>
+        <li>전체화면 버튼(⛶)을 누르면 버튼과 헤더가 사라지고 숫자가 화면 가득 커져 프로젝터나 대형 모니터에 띄우기 좋습니다.</li>
+        <li>시간이 끝나면 화면이 깜빡이며 알림음이 세 번 울립니다. 탭 제목에도 남은 시간이 표시되어 다른 창을 보면서도 확인할 수 있습니다.</li>
+        <li>스톱워치 탭으로 전환하면 경과 시간을 재는 카운트업 모드로 사용할 수 있습니다.</li>
+      </ol>
+      <p>대형 타이머는 수업 시간 관리, 발표 제한 시간, 회의 타임박스, 시험 시간 안내, 요리나 운동 인터벌까지 큰 숫자가 필요한 모든 상황을 위한 무료 웹 타이머입니다. 시작 시각을 기준으로 남은 시간을 계산하기 때문에 탭을 백그라운드에 두어도 시간이 밀리지 않으며, 별도 설치나 회원가입 없이 브라우저에서 바로 사용할 수 있습니다. 마지막으로 사용한 모드와 시간은 브라우저에 자동 저장됩니다.</p>
+      <h2>자주 묻는 질문</h2>
+      <dl>
+        <dt>타이머를 프로젝터나 큰 화면에 띄우려면 어떻게 하나요?</dt>
+        <dd>전체화면 버튼(⛶)을 누르면 헤더와 버튼이 사라지고 숫자가 화면 가득 커집니다. ESC 키를 누르면 원래 화면으로 돌아옵니다.</dd>
+        <dt>종료 알림음이 나지 않아요.</dt>
+        <dd>브라우저 정책상 소리는 사용자가 페이지와 상호작용한 뒤에만 재생됩니다. 시작 버튼을 눌렀다면 종료 시 알림음이 재생되며, 기기 음량과 무음 모드도 확인해 주세요.</dd>
+        <dt>탭을 백그라운드에 두면 시간이 어긋나지 않나요?</dt>
+        <dd>아니요. 시작 시각 기준으로 남은 시간을 계산하므로 다른 창을 보다가 돌아와도 시간은 정확합니다.</dd>
+      </dl>
+    </section>
+
+    <footer class="footer">
+      <a href="ladder.html">사다리타기</a>
+      <a href="roulette.html">룰렛</a>
+      <a href="team.html">팀 나누기</a>
+      <a href="timer.html">타이머</a>
+    </footer>
+  </div>
+  <script type="module" src="js/timer.js"></script>
+</body>
+</html>
