@@ -113,7 +113,13 @@ export function initFullscreen(btnId) {
     if (document.fullscreenElement) document.exitFullscreen();
     else document.documentElement.requestFullscreen().catch(() => {});
   });
-  document.addEventListener('fullscreenchange', () => {
-    document.body.classList.toggle('fs-active', !!document.fullscreenElement);
-  });
+  const sync = () => {
+    // Fullscreen API + F11 브라우저 전체화면(이벤트 없음 → 크기 휴리스틱) 모두 감지
+    const f11Like = window.innerHeight >= screen.height - 2
+      && window.innerWidth >= screen.width - 2;
+    document.body.classList.toggle('fs-active', !!document.fullscreenElement || f11Like);
+  };
+  document.addEventListener('fullscreenchange', sync);
+  window.addEventListener('resize', sync);
+  sync();
 }
